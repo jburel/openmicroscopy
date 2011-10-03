@@ -7118,9 +7118,41 @@ class OMEROGateway
 						"Cannot upload the script: "+script.getName()+".");
 				return -1;
 			}
-			if (official)
+			if (official) {
+				List<OriginalFile> scripts = svc.getScripts();
+				Iterator<OriginalFile> j = scripts.iterator();
+				String path = "";
+				while (j.hasNext()) {
+					OriginalFile of = j.next();
+					System.err.println(of.getId().getValue());
+					if (of.getPath() != null)
+						path = of.getPath().getValue();
+					if (of.getName() != null)
+						path += of.getName().getValue();
+					if (script.getFolder().equals(path)) {
+						svc.editScript(of, buf.toString());
+						return of.getId().getValue();
+					}
+				}
 				return svc.uploadOfficialScript(script.getFolder(), 
 						buf.toString());
+			}
+			List<OriginalFile> scripts = svc.getScripts();
+			Iterator<OriginalFile> j = scripts.iterator();
+			String path = "";
+			while (j.hasNext()) {
+				OriginalFile of = j.next();
+				if (of.getPath() != null)
+					path = of.getPath().getValue();
+				if (of.getName() != null)
+					path += of.getName().getValue();
+				if (script.getFolder().equals(path)) {
+					System.err.println(buf.toString());
+					svc.editScript(of, buf.toString());
+					return of.getId().getValue();
+					
+				}
+			}
 			return svc.uploadScript(script.getFolder(), buf.toString());
 		} catch (Exception e) {
 			handleException(e, 
