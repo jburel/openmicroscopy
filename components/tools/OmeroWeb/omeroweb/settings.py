@@ -130,6 +130,11 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'formatter': 'full_request',
         },
+        'default_console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
         'null': {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
@@ -342,6 +347,14 @@ CUSTOM_SETTINGS_MAPPINGS = {
          ("A boolean that turns on/off debug mode. "
           "Use debug mode only in development, not in production, as it logs "
           "sensitive and confidential information in plaintext.")],
+    "omero.web.default_log_handler_name":
+        ["LOG_HANDLER_NAME",
+         "default",
+         str,
+         ("Name of a built-in log handler, either `default` for the default "
+          "rotating file handler or `default_console` to log to stdout, for "
+          "example when running in the foreground "
+          "(`omero web start --foreground`)")],
     "omero.web.secret_key":
         ["SECRET_KEY",
          None,
@@ -962,6 +975,9 @@ process_custom_settings(sys.modules[__name__], 'INTERNAL_SETTINGS_MAPPING')
 process_custom_settings(sys.modules[__name__], 'CUSTOM_SETTINGS_MAPPINGS',
                         'DEPRECATED_SETTINGS_MAPPINGS')
 process_custom_settings(sys.modules[__name__], 'DEVELOPMENT_SETTINGS_MAPPINGS')
+
+LOGGING['loggers']['']['handlers'] = [sys.modules[__name__].LOG_HANDLER_NAME]
+
 
 if not DEBUG:  # from CUSTOM_SETTINGS_MAPPINGS  # noqa
     LOGGING['loggers']['django.request']['level'] = 'INFO'
