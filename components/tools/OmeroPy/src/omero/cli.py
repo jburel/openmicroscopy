@@ -1554,26 +1554,30 @@ def cli_login(*args, **kwargs):
     passed to onecmd
 
     kwargs:
-      - keep_alive
+      - keep_alive (keep alive interval, default 300)
+      - close (close session afterwards, default True)
     """
 
     keep_alive = kwargs.get("keep_alive", 300)
+    close_after = kwargs.get("close", True)
     try:
         cli = omero.cli.CLI()
         cli.loadplugins()
         login = ["-q", "login"]
         login.extend(list(args))
         cli.onecmd(login)
+        client = cli.get_client()
+        if not client:
+            raise Exception("Failed to login")
+        if not close_after:
+            client.getSession().detachOnDestroy()
         if keep_alive is not None:
-            client = cli.get_client()
-            if client is not None:
-                keep_alive = int(keep_alive)
-                client.enableKeepAlive(keep_alive)
-            else:
-                raise Exception("Failed to login")
+            keep_alive = int(keep_alive)
+            client.enableKeepAlive(keep_alive)
         yield cli
     finally:
         cli.close()
+        client.stopKeepAlive()
 
 
 def argv(args=sys.argv):
