@@ -258,9 +258,8 @@ To get started using Eclipse, execute "ant build-dev" and import the top-level
         <exec executable="python" failonerror="true">
             <arg value="${omero.home}/components/antlib/scripts/source-archive.py"/>
             <arg value="openmicroscopy"/>
-            <arg value="${omero.version}"/>
             <arg value="${omero.shortversion}"/>
-            <arg value="${omero.plainversion}"/>
+            <arg value="${omero.version}"/>
             <arg value="${omero.vcs.shortrevision}"/>
             <arg value="${omero.vcs.revision}"/>
             <arg value="${omero.vcs.date}"/>
