@@ -45,7 +45,7 @@ jobs:
         id: bf
         if: matrix.build_bf
         run: |
-          git clone https://github.com/ome/bioformats /tmp/bioformats --depth 1
+          git clone -b kryo-5.4.0 https://github.com/melissalinkert/bioformats /tmp/bioformats --depth 1
           cd /tmp/bioformats
           mvn install -DskipTests -q
           echo "bf_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
